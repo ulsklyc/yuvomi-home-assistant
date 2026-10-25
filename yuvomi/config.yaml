@@ -1,0 +1,50 @@
+name: Yuvomi
+version: "2.79.0"
+slug: yuvomi
+description: Self-hosted family planner - tasks, calendar, shopping, meals, budget
+url: https://github.com/ulsklyc/yuvomi-home-assistant/tree/main/yuvomi
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: auto
+backup: cold
+backup_exclude:
+  - "*.plaintext-backup"
+homeassistant_api: true
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: Yuvomi web interface
+webui: "http://[HOST]:[PORT:3000]/"
+watchdog: "http://[HOST]:[PORT:3000]/health"
+map:
+  - share:rw
+  - media:rw
+  - addon_config:rw
+options:
+  encrypt_database: false
+  encryption_key: ""
+  backup_dir: /share/yuvomi/backups
+  local_documents: false
+  documents_dir: /share/yuvomi/documents
+  behind_https_proxy: false
+  base_url: ""
+  use_home_assistant_location: true
+  log_level: info
+  modules_allow_web_install: false
+  env_vars: []
+schema:
+  encrypt_database: bool
+  encryption_key: password?
+  backup_dir: match(^/(share|media)/.+)
+  local_documents: bool
+  documents_dir: match(^/(share|media)/.+)
+  behind_https_proxy: bool
+  base_url: str?
+  use_home_assistant_location: bool
+  log_level: list(debug|info|warn|error)
+  modules_allow_web_install: bool
+  env_vars:
+    - name: match(^[A-Z][A-Z0-9_]{1,63}$)
+      value: str

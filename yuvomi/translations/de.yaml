@@ -1,0 +1,50 @@
+configuration:
+  encrypt_database:
+    name: Datenbank verschlüsseln
+    description: >-
+      Verschlüsselt die Datenbank mit AES-256 (SQLCipher). Empfohlen, wenn du
+      das Gesundheitsmodul nutzt. Lässt sich später einschalten, aber nicht
+      wieder ausschalten.
+  encryption_key:
+    name: Schlüssel
+    description: >-
+      Optional, mindestens 16 Zeichen. Leer lassen, dann wird einer erzeugt;
+      eine Kopie liegt als db_encryption_key.txt im Konfigurationsordner der App.
+      Ein verlorener oder geänderter Schlüssel öffnet die Datenbank nie wieder.
+  backup_dir:
+    name: Backup-Ordner
+    description: Wohin Yuvomi seine eigenen geplanten Backups schreibt (unter /share oder /media).
+  local_documents:
+    name: Dokumente in einem Ordner speichern
+    description: Legt hochgeladene Dokumente als Dateien ab statt in der Datenbank.
+  documents_dir:
+    name: Dokumente-Ordner
+    description: Ordner für Dokumente, wenn „Dokumente in einem Ordner speichern“ an ist (unter /share oder /media).
+  behind_https_proxy:
+    name: Hinter einem HTTPS-Reverse-Proxy
+    description: >-
+      Einschalten, wenn Yuvomi über einen HTTPS-Reverse-Proxy erreichbar ist.
+      Aktiviert sichere Cookies und vertraut einem Proxy-Hop. Nötig für
+      Push-Benachrichtigungen.
+  base_url:
+    name: Öffentliche URL
+    description: Die Adresse, unter der Yuvomi von außen erreichbar ist, z. B. https://familie.example.com. Wird für Push-Benachrichtigungen genutzt.
+  use_home_assistant_location:
+    name: Standort aus Home Assistant fürs Wetter
+    description: Übernimmt Koordinaten und Einheitensystem aus Home Assistant für das Wetter-Widget.
+  log_level:
+    name: Log-Level
+    description: Detailgrad im Protokoll der App.
+  modules_allow_web_install:
+    name: Module über die Weboberfläche installieren
+    description: >-
+      Erlaubt einem Admin, Module von Drittanbietern in den Einstellungen zu
+      installieren. Sie liegen im Ordner modules im Konfigurationsordner der App.
+  env_vars:
+    name: Weitere Umgebungsvariablen
+    description: >-
+      Für alles Weitere, was Yuvomi unterstützt (OIDC, Google Kalender,
+      Outlook, E-Mail usw.). Die Variablennamen stehen in der
+      Yuvomi-Installationsanleitung.
+network:
+  3000/tcp: Yuvomi-Weboberfläche

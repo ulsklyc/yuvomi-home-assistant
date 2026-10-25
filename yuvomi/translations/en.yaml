@@ -1,0 +1,47 @@
+configuration:
+  encrypt_database:
+    name: Encrypt database
+    description: >-
+      Encrypts the database with AES-256 (SQLCipher). Recommended if you use
+      the Health module. Can be switched on later, but not off again.
+  encryption_key:
+    name: Encryption key
+    description: >-
+      Optional, at least 16 characters. Leave empty to have a key generated;
+      a copy is written to db_encryption_key.txt in the app's config folder.
+      A lost or changed key can never open the database again.
+  backup_dir:
+    name: Backup folder
+    description: Where Yuvomi writes its own scheduled backups (below /share or /media).
+  local_documents:
+    name: Store documents in a folder
+    description: Stores uploaded documents as files instead of inside the database.
+  documents_dir:
+    name: Documents folder
+    description: Folder for documents when "Store documents in a folder" is on (below /share or /media).
+  behind_https_proxy:
+    name: Behind an HTTPS reverse proxy
+    description: >-
+      Turn on if Yuvomi is reached through an HTTPS reverse proxy. Enables
+      secure cookies and trusts one proxy hop. Needed for push notifications.
+  base_url:
+    name: Public URL
+    description: The address Yuvomi is reached at from outside, e.g. https://family.example.com. Used for push notifications.
+  use_home_assistant_location:
+    name: Use Home Assistant location for weather
+    description: Takes the home coordinates and unit system from Home Assistant for the weather widget.
+  log_level:
+    name: Log level
+    description: Amount of detail in the app log.
+  modules_allow_web_install:
+    name: Allow installing modules from the web interface
+    description: >-
+      Lets an admin install third-party modules from Settings. Modules are
+      stored in the modules folder inside the app's config folder.
+  env_vars:
+    name: Additional environment variables
+    description: >-
+      For everything else Yuvomi supports (OIDC, Google Calendar, Outlook,
+      e-mail and so on). See the Yuvomi installation guide for the variable names.
+network:
+  3000/tcp: Yuvomi web interface
