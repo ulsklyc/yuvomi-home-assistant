@@ -38,7 +38,7 @@ optional database key. Yuvomi itself runs unchanged.
 The version appears in two places and both must match the image tag:
 
 - `yuvomi/config.yaml` → `version`
-- `yuvomi/build.yaml` → `build_from`
+- `yuvomi/Dockerfile` → `ARG BUILD_FROM`
 
 Renovate (`renovate.json`) opens a pull request for both when a new image is
 published. Add an entry to `yuvomi/CHANGELOG.md` with the link to the
