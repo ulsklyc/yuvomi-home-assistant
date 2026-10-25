@@ -17,6 +17,7 @@ multi-arch image `ghcr.io/ulsklyc/yuvomi:<version>` and only adds a launcher.
 
 ```
 repository.yaml              HA app repository metadata
+LICENSE                      MIT (Oliver Kluth); Yuvomi itself is MIT by ulsklyc
 yuvomi/config.yaml           App manifest: version, arch, ports, options + schema
 yuvomi/Dockerfile            ARG BUILD_FROM=upstream image (must match config.yaml
                              version), copies rootfs/, HEALTHCHECK, entrypoint /ha/run.sh
