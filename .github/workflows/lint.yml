@@ -18,12 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: config.yaml and build.yaml use the same Yuvomi version
+      - name: config.yaml and Dockerfile use the same Yuvomi version
         run: |
           app=$(sed -nE 's/^version: "([^"]+)"/\1/p' yuvomi/config.yaml)
-          for tag in $(sed -nE 's/.*ghcr\.io\/ulsklyc\/yuvomi:([0-9.]+).*/\1/p' yuvomi/build.yaml); do
-            [ "$tag" = "$app" ] || { echo "build.yaml uses $tag, config.yaml says $app"; exit 1; }
-          done
+          tag=$(sed -nE 's/^ARG BUILD_FROM=ghcr\.io\/ulsklyc\/yuvomi:([0-9.]+)$/\1/p' yuvomi/Dockerfile)
+          [ -n "$tag" ] && [ "$tag" = "$app" ] || { echo "Dockerfile uses '$tag', config.yaml says $app"; exit 1; }
           echo "Both at $app"
 
   build:
@@ -34,6 +33,4 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - name: Build for amd64 and aarch64
         run: |
-          from=$(sed -nE 's/^  amd64: (.*)/\1/p' yuvomi/build.yaml)
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            --build-arg BUILD_FROM="$from" yuvomi
+          docker buildx build --platform linux/amd64,linux/arm64 yuvomi

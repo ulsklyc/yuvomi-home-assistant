@@ -38,11 +38,16 @@ optional database key. Yuvomi itself runs unchanged.
 The version appears in two places and both must match the image tag:
 
 - `yuvomi/config.yaml` → `version`
-- `yuvomi/build.yaml` → `build_from`
+- `yuvomi/Dockerfile` → `ARG BUILD_FROM`
 
 Renovate (`renovate.json`) opens a pull request for both when a new image is
 published. Add an entry to `yuvomi/CHANGELOG.md` with the link to the
 Yuvomi release.
+
+## License
+
+MIT, see [LICENSE](LICENSE). Yuvomi itself is MIT-licensed by ulsklyc; this
+repository contains no Yuvomi code and builds on the published image.
 
 [repo-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
 [repo-link]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fulsklyc%2Fyuvomi-home-assistant

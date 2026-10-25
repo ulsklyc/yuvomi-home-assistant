@@ -9,6 +9,11 @@ set -u
 YUVOMI="${1:?path to a Yuvomi checkout}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PREPARE="$ROOT/yuvomi/rootfs/ha/prepare.mjs"
+# Another server on port 3000 would answer the health checks instead.
+if curl -s -o /dev/null localhost:3000; then
+  echo "Port 3000 is already in use; stop that server first." >&2
+  exit 1
+fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$WORK/data" "$WORK/config"

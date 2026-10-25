@@ -6,8 +6,6 @@ url: https://github.com/ulsklyc/yuvomi-home-assistant/tree/main/yuvomi
 arch:
   - amd64
   - aarch64
-startup: application
-boot: auto
 backup: cold
 backup_exclude:
   - "*.plaintext-backup"
@@ -17,11 +15,10 @@ ports:
 ports_description:
   3000/tcp: Yuvomi web interface
 webui: "http://[HOST]:[PORT:3000]/"
-watchdog: "http://[HOST]:[PORT:3000]/health"
 map:
   - share:rw
   - media:rw
-  - addon_config:rw
+  - app_config:rw
 options:
   encrypt_database: false
   encryption_key: ""
