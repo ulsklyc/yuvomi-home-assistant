@@ -8,7 +8,7 @@
 
 import { createHash, randomBytes } from 'node:crypto';
 import {
-  chownSync, existsSync, mkdirSync, openSync, readFileSync, readSync,
+  chmodSync, chownSync, existsSync, mkdirSync, openSync, readFileSync, readSync,
   closeSync, readdirSync, lstatSync, writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
@@ -94,8 +94,17 @@ function chownRecursive(target, owner) {
   }
 }
 
+// run.sh runs with umask 077, so mkdirSync would create parents like
+// /share/yuvomi as root-only and the node user could not reach the leaf.
+// Directories created here get 0755; existing ones are left alone.
 function prepareDir(dir, owner) {
-  mkdirSync(dir, { recursive: true });
+  const first = mkdirSync(dir, { recursive: true });
+  if (first) {
+    for (let d = path.resolve(dir); ; d = path.dirname(d)) {
+      chmodSync(d, 0o755);
+      if (d === path.resolve(first)) break;
+    }
+  }
   if (owner && process.getuid?.() === 0) chownRecursive(dir, owner);
 }
 
