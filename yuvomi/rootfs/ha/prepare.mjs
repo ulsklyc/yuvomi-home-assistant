@@ -25,9 +25,13 @@ const SUPERVISOR_URL = process.env.HA_SUPERVISOR_URL || 'http://supervisor';
 
 // Values the app manages itself. env_vars must not override them, because a
 // wrong DB_PATH or key silently starts an empty instance or locks the data.
+// The *_FILE variants (Yuvomi 2.80+) are blocked too: next to our own value
+// they stop the start, and with encryption off DB_ENCRYPTION_KEY_FILE would
+// encrypt the database past the key guard.
 const MANAGED = new Set([
   'PORT', 'DB_PATH', 'BACKUP_DIR', 'MODULES_DIR', 'SESSION_SECRET',
-  'DB_ENCRYPTION_KEY', 'DOCUMENT_STORAGE_LOCAL_PATH', 'NODE_ENV',
+  'SESSION_SECRET_FILE', 'DB_ENCRYPTION_KEY', 'DB_ENCRYPTION_KEY_FILE',
+  'DOCUMENT_STORAGE_LOCAL_PATH', 'NODE_ENV',
 ]);
 
 const log = (msg) => process.stderr.write(`[yuvomi-ha] ${msg}\n`);

@@ -4,7 +4,7 @@
 # The upstream image is multi-arch; the Supervisor builds with --platform and
 # no longer passes BUILD_FROM once build.yaml is gone. Keep the tag equal to
 # the version in config.yaml.
-ARG BUILD_FROM=ghcr.io/ulsklyc/yuvomi:2.79.0
+ARG BUILD_FROM=ghcr.io/ulsklyc/yuvomi:2.83.0
 FROM ${BUILD_FROM}
 
 COPY rootfs /
