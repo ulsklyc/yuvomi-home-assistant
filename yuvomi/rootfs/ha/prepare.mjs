@@ -187,7 +187,19 @@ function encryptionKey(options) {
   return key;
 }
 
-async function homeAssistantLocation() {
+// Home Assistant's location_name is the name of the instance, not a place, and
+// many setups keep the default "Home". Showing that as the weather city is
+// misleading, so the default name is dropped.
+const DEFAULT_LOCATION_NAMES = new Set(['home']);
+
+function weatherCity(option, locationName) {
+  const own = String(option || '').trim();
+  if (own) return own;
+  const name = String(locationName || '').trim();
+  return DEFAULT_LOCATION_NAMES.has(name.toLowerCase()) ? '' : name;
+}
+
+async function homeAssistantLocation(cityOption) {
   const token = process.env.SUPERVISOR_TOKEN;
   if (!token) return null;
   try {
@@ -201,7 +213,7 @@ async function homeAssistantLocation() {
     return {
       WEATHER_LAT: String(cfg.latitude),
       WEATHER_LON: String(cfg.longitude),
-      WEATHER_CITY: cfg.location_name || '',
+      WEATHER_CITY: weatherCity(cityOption, cfg.location_name),
       WEATHER_UNITS: cfg.unit_system?.temperature === '°F' ? 'imperial' : 'metric',
     };
   } catch (err) {
@@ -248,10 +260,10 @@ async function main() {
   }
 
   if (options.use_home_assistant_location && !custom.WEATHER_LAT && !custom.OPENWEATHER_API_KEY) {
-    const location = await homeAssistantLocation();
+    const location = await homeAssistantLocation(options.weather_city);
     if (location) {
       Object.assign(env, location);
-      log(`Using the Home Assistant location for weather (${location.WEATHER_CITY || 'home'}).`);
+      log(`Using the Home Assistant location for weather (${location.WEATHER_CITY || 'no city name'}).`);
     }
   }
 

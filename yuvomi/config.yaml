@@ -1,5 +1,5 @@
 name: Yuvomi
-version: "2.83.0"
+version: "2.84.0"
 slug: yuvomi
 description: Self-hosted family planner - tasks, calendar, shopping, meals, budget
 url: https://github.com/ulsklyc/yuvomi-home-assistant/tree/main/yuvomi
@@ -28,6 +28,7 @@ options:
   behind_https_proxy: false
   base_url: ""
   use_home_assistant_location: true
+  weather_city: ""
   log_level: info
   modules_allow_web_install: false
   env_vars: []
@@ -40,6 +41,7 @@ schema:
   behind_https_proxy: bool
   base_url: str?
   use_home_assistant_location: bool
+  weather_city: str?
   log_level: list(debug|info|warn|error)
   modules_allow_web_install: bool
   env_vars:

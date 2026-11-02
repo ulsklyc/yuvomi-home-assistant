@@ -68,6 +68,12 @@ The address Yuvomi is reached at from outside, e.g.
 Fills in the weather widget with your Home Assistant home location and unit
 system. Ignored when you set `WEATHER_LAT` or `OPENWEATHER_API_KEY` yourself.
 
+### City name for the weather
+
+The name the weather widget shows for the Home Assistant location. Left empty,
+the app uses the name of your Home Assistant instance (Settings > System >
+General), unless it is still the default "Home"; then the widget shows no name.
+
 ### Additional environment variables
 
 Everything else Yuvomi supports, such as single sign-on (OIDC), Google

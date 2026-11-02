@@ -30,6 +30,9 @@ configuration:
   use_home_assistant_location:
     name: Use Home Assistant location for weather
     description: Takes the home coordinates and unit system from Home Assistant for the weather widget.
+  weather_city:
+    name: City name for the weather
+    description: Shown in the weather widget when the Home Assistant location is used. Empty takes the name of your Home Assistant instance, unless it is still "Home".
   log_level:
     name: Log level
     description: Amount of detail in the app log.
