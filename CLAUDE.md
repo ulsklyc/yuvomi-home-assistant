@@ -155,8 +155,7 @@ location via `/core/api/config`, setup and sign-in, partial cold backup.
    to take it over as the official Yuvomi app (issue #2). Transferred to
    `ulsklyc/yuvomi-home-assistant` on 2026-11-01; Olli stays on as a
    collaborator (write access), changes go in via pull requests. ulsklyc made
-   the repo public on 2026-11-02. Still to do: point the local `origin` at the
-   new URL (the old one redirects).
+   the repo public on 2026-11-02.
 4. Sign in with Home Assistant: upstream PR ulsklyc/yuvomi#2428 (open, by
    littleopa) adds `HOMEASSISTANT_URL` / `HOMEASSISTANT_INTERNAL_URL`. Do not
    patch the image; add options once it is released. Planned mapping:
