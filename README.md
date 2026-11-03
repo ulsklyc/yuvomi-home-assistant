@@ -115,6 +115,8 @@ The app version always equals the Yuvomi version it is built on.
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs the launcher
   against a real Yuvomi server through the encryption scenarios (start, enable, refuse to switch
   off, refuse a wrong key). Needs Node 22.14+ and `npm ci --omit=dev` in the checkout.
+- **Contributing** - constraints, decisions, commit and AI assistance rules are in
+  [CONTRIBUTING.md](CONTRIBUTING.md).
 
 </details>
 
