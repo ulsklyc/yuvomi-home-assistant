@@ -79,7 +79,7 @@ renovate.json                Bumps image tag in Dockerfile and version in config
   router on `location.pathname`, `/sw.js` with root scope). Upstream needs a
   base-path feature first; tracked in ulsklyc/yuvomi#2231 (our notes are in
   a comment there). Until then the
-  app exposes port 3000 and `webui`.
+  app exposes its own port (host 3880, container 3000) and `webui`.
 - **Webpage dashboard / iframe** is no workaround: helmet defaults
   (`frame-ancestors 'self'`, `X-Frame-Options: SAMEORIGIN`) block embedding
   from HA on port 8123, and ulsklyc wants framing kept out (#2231, discussion
@@ -103,6 +103,12 @@ renovate.json                Bumps image tag in Dockerfile and version in config
   `/health`, no curl in the image); the `watchdog:` key is obsolete per the
   linter. `startup`/`boot` are omitted because they are defaults.
 - Arch: amd64 and aarch64 only (upstream image has no armv7).
+- **Host port 3880** (container port stays 3000). 3000 is the default of at
+  least eight other apps (Dawarich, Gitea, Chromium, littleopa/ha-yuvomi, ...);
+  3880 was free in all configs of `home-assistant/addons`, `hassio-addons/app-*`
+  and `alexbelgium/hassio-addons` (2026-11-03, 173 apps). Ships with the next
+  Yuvomi bump: the changelog has it under "Unreleased", the bump turns that
+  into the version heading.
 
 ## Testing
 

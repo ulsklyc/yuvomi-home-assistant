@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- The default host port is now 3880 instead of 3000. Port 3000 is the default
+  of many other apps (Dawarich, Gitea, Chromium and others), so the two could
+  not run side by side. Reported in #4.
+  **If you never changed the port**, Yuvomi moves to port 3880 with this
+  update: update bookmarks, the app on your phone's home screen, "Public URL"
+  and your reverse proxy, or set the port back to 3000 under
+  Configuration > Network. A port you set yourself stays as it is.
+  The new port is a new address for the browser: add the app to the home
+  screen again and switch push notifications back on.
 - The weather city falls back to the name of the Home Assistant instance
   again, even when it is "Home". Without a name, Yuvomi shows the raw
   coordinates instead, which 2.84.0 did (#4). Set "City name for the weather"
