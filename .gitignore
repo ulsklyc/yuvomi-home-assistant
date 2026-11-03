@@ -1,1 +1,19 @@
+# System
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# AI dev tooling - local only, never published (Claude Code, Codex, agent skills)
+.claude/
+.codex/
+.agents/
+.github/skills/
+.github/hooks/
+.playwright-mcp/
+AGENTS.md
+CLAUDE.md
