@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- The weather city falls back to the name of the Home Assistant instance
+  again, even when it is "Home". Without a name, Yuvomi shows the raw
+  coordinates instead, which 2.84.0 did (#4). Set "City name for the weather"
+  to show your town; the log says so when the name is "Home".
+- The Home Assistant coordinates are rounded to about 1 km before they reach
+  Yuvomi, so the exact position of the home no longer shows in the weather
+  widget or settings.
+
 ## 2.84.0
 
 - Based on [Yuvomi 2.84.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.84.0)

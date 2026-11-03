@@ -32,7 +32,7 @@ configuration:
     description: Takes the home coordinates and unit system from Home Assistant for the weather widget.
   weather_city:
     name: City name for the weather
-    description: Shown in the weather widget when the Home Assistant location is used. Empty takes the name of your Home Assistant instance, unless it is still "Home".
+    description: Shown in the weather widget when the Home Assistant location is used. Empty takes the name of your Home Assistant instance, often "Home".
   log_level:
     name: Log level
     description: Amount of detail in the app log.

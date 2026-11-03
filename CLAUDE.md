@@ -57,9 +57,11 @@ renovate.json                Bumps image tag in Dockerfile and version in config
   otherwise `false` / `loopback`.
 - Weather: if `use_home_assistant_location`, reads `/core/api/config` via the
   Supervisor (`homeassistant_api: true`) unless the user set `WEATHER_LAT` or
-  `OPENWEATHER_API_KEY` in `env_vars`. `WEATHER_CITY` is only a label: the
-  `weather_city` option, else HA's `location_name` unless it is the default
-  "Home" (that is the instance name, not a place; issue #4).
+  `OPENWEATHER_API_KEY` in `env_vars`. Coordinates are rounded to 2 decimals
+  (~1 km). `WEATHER_CITY` is only a label: the `weather_city` option, else
+  HA's `location_name`, even when it is the default "Home" (then the log
+  suggests the option). Never leave it empty: Yuvomi then shows the raw
+  coordinates as the city (`server/routes/weather.js`, issue #4).
 - `env_vars` are applied last; managed names (DB_PATH, PORT, SESSION_SECRET,
   DB_ENCRYPTION_KEY, their `_FILE` variants, BACKUP_DIR, MODULES_DIR,
   DOCUMENT_STORAGE_LOCAL_PATH, NODE_ENV) are ignored with a log line.

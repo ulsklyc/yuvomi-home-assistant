@@ -70,9 +70,12 @@ system. Ignored when you set `WEATHER_LAT` or `OPENWEATHER_API_KEY` yourself.
 
 ### City name for the weather
 
-The name the weather widget shows for the Home Assistant location. Left empty,
-the app uses the name of your Home Assistant instance (Settings > System >
-General), unless it is still the default "Home"; then the widget shows no name.
+The name the weather widget shows for the Home Assistant location, e.g. your
+town. Left empty, the app uses the name of your Home Assistant instance
+(Settings > System > General), which is often still the default "Home".
+
+The coordinates are rounded to about 1 km before they reach Yuvomi. That is
+plenty for the weather and keeps the exact position of your home out of it.
 
 ### Additional environment variables
 
