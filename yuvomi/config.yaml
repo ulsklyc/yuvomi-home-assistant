@@ -11,7 +11,7 @@ backup_exclude:
   - "*.plaintext-backup"
 homeassistant_api: true
 ports:
-  3000/tcp: 3000
+  3000/tcp: 3880
 ports_description:
   3000/tcp: Yuvomi web interface
 webui: "http://[HOST]:[PORT:3000]/"

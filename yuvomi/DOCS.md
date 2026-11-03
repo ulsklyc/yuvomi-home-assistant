@@ -7,8 +7,8 @@ This app runs the official Yuvomi image next to Home Assistant.
 ## Getting started
 
 1. Install the app and start it.
-2. Select **Open Web UI**. Yuvomi opens on port 3000 of your Home Assistant
-   host, e.g. `http://homeassistant.local:3000`.
+2. Select **Open Web UI**. Yuvomi opens on port 3880 of your Home Assistant
+   host, e.g. `http://homeassistant.local:3880`.
 3. The first visit walks you through creating the admin account.
 4. Invite the rest of the family from **Settings > Family**.
 
@@ -95,6 +95,15 @@ The full list is in the
 [installation guide](https://github.com/ulsklyc/yuvomi/blob/main/docs/installation.md#environment-variables).
 Paths, the session secret and the encryption key are managed by the app and
 cannot be overridden here.
+
+## Port
+
+Yuvomi listens on port 3880 of your Home Assistant host. To use another one,
+change it under **Configuration > Network** and restart the app. Use the same
+port in **Public URL** and in your reverse proxy.
+
+Installations from before this default changed used port 3000. If yours still
+does after an update and you would like to keep it, set 3000 there.
 
 ## Modules
 
