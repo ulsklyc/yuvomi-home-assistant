@@ -188,16 +188,19 @@ function encryptionKey(options) {
 }
 
 // Home Assistant's location_name is the name of the instance, not a place, and
-// many setups keep the default "Home". Showing that as the weather city is
-// misleading, so the default name is dropped.
+// many setups keep the default "Home". It is still used as the label: Yuvomi
+// shows the raw coordinates when WEATHER_CITY is empty, which is worse. The
+// weather_city option overrides it, and the log points to that option.
 const DEFAULT_LOCATION_NAMES = new Set(['home']);
 
 function weatherCity(option, locationName) {
   const own = String(option || '').trim();
-  if (own) return own;
-  const name = String(locationName || '').trim();
-  return DEFAULT_LOCATION_NAMES.has(name.toLowerCase()) ? '' : name;
+  return own || String(locationName || '').trim();
 }
+
+// The weather needs no more than about 1 km. Rounding keeps the exact position
+// of the home out of Yuvomi, where it would show in the widget and settings.
+const roundCoordinate = (value) => String(Math.round(value * 100) / 100);
 
 async function homeAssistantLocation(cityOption) {
   const token = process.env.SUPERVISOR_TOKEN;
@@ -211,8 +214,8 @@ async function homeAssistantLocation(cityOption) {
     const cfg = await res.json();
     if (typeof cfg.latitude !== 'number' || typeof cfg.longitude !== 'number') return null;
     return {
-      WEATHER_LAT: String(cfg.latitude),
-      WEATHER_LON: String(cfg.longitude),
+      WEATHER_LAT: roundCoordinate(cfg.latitude),
+      WEATHER_LON: roundCoordinate(cfg.longitude),
       WEATHER_CITY: weatherCity(cityOption, cfg.location_name),
       WEATHER_UNITS: cfg.unit_system?.temperature === '°F' ? 'imperial' : 'metric',
     };
@@ -264,6 +267,9 @@ async function main() {
     if (location) {
       Object.assign(env, location);
       log(`Using the Home Assistant location for weather (${location.WEATHER_CITY || 'no city name'}).`);
+      if (DEFAULT_LOCATION_NAMES.has(location.WEATHER_CITY.toLowerCase())) {
+        log('The weather shows "Home", the default name of this Home Assistant instance. Set "City name for the weather" to show a place.');
+      }
     }
   }
 

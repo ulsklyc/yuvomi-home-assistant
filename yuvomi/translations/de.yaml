@@ -34,7 +34,7 @@ configuration:
     description: Übernimmt Koordinaten und Einheitensystem aus Home Assistant für das Wetter-Widget.
   weather_city:
     name: Ortsname fürs Wetter
-    description: Wird im Wetter-Widget angezeigt, wenn der Standort aus Home Assistant kommt. Leer übernimmt den Namen deiner Home-Assistant-Instanz, außer er lautet noch „Home“.
+    description: Wird im Wetter-Widget angezeigt, wenn der Standort aus Home Assistant kommt. Leer übernimmt den Namen deiner Home-Assistant-Instanz, oft „Home“.
   log_level:
     name: Log-Level
     description: Detailgrad im Protokoll der App.
