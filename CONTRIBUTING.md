@@ -142,10 +142,12 @@ The full policy is in Yuvomi's
 [AI Assistance](https://github.com/ulsklyc/yuvomi/blob/main/CONTRIBUTING.md#ai-assistance)
 section, and it applies here unchanged.
 
-- **Say so if an agent wrote it**, with one line in the pull request description
-  ("drafted with Claude Code"). It is not a mark against the contribution.
+- **If you contribute, say so if an agent wrote it**, with one line in the pull request
+  description ("drafted with Claude Code"). It is not a mark against the contribution. The
+  maintainer's own pull requests carry no such line: how this project uses agents is stated once,
+  in the section linked above.
 - **No tool attribution in commits** - no `Co-Authored-By:` trailer for a tool and no
-  "Generated with" footer. The disclosure lives in the pull request, once.
+  "Generated with" footer.
 - Agent instruction files (`CLAUDE.md`, `AGENTS.md`, `.claude/` and the like) stay local; they
   are ignored in `.gitignore`.
 
