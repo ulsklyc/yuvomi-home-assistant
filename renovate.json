@@ -17,11 +17,10 @@
       "groupName": "Yuvomi"
     },
     {
-      "description": "Action updates merge once all checks pass; Renovate checks them itself, GitHub auto-merge would not wait without required checks. The Yuvomi bump stays manual.",
+      "description": "Action updates merge once the required checks on main pass. The Yuvomi bump stays manual.",
       "matchManagers": ["github-actions"],
       "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": false
+      "automergeType": "pr"
     }
   ]
 }
