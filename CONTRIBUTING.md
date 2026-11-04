@@ -102,8 +102,8 @@ renovate.json                Bumps the image tag and the app version together, a
   `main`. Each image carries the label `dev.yuvomi.ha.content` (git hashes of `rootfs/` and the
   Dockerfile). A version bump rebuilds when they differ; images of a version already on `main` are
   never replaced, so launcher changes ship with the next version, like the changelog says.
-  Every run also pulls the images without signing in, as a Home Assistant install does; a new
-  GHCR package starts private and has to be made public once in its package settings.
+  Every run also pulls the images without signing in, as a Home Assistant install does, so a
+  package that is not public fails the check.
 - **`app_config`** instead of the legacy `addon_config` map; the Samba share is still called
   `addon_configs`, so the docs keep that path.
 - **Watchdog through a Docker `HEALTHCHECK`** (node `fetch` on `/health`; the image has no curl).

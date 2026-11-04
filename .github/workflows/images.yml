@@ -13,8 +13,9 @@ name: Images
 # - On main: builds missing images and fails if the version this push
 #   released has images built from other launcher files.
 # Every run ends by pulling the images anonymously, as a Home Assistant
-# install does: a new GHCR package starts private and has to be made public
-# once in its package settings.
+# install does. The packages took over the visibility of this public
+# repository when they were first pushed; the check catches it if that ever
+# changes.
 #
 # Forks get a read-only token, so a version bump has to come from a branch in
 # this repository.
