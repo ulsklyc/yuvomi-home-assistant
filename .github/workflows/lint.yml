@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Started by the Changelog workflow for the commit it adds to a Renovate
+  # pull request: a push with GITHUB_TOKEN starts no pull_request run.
+  workflow_dispatch:
 
 jobs:
   addon-linter:

@@ -33,7 +33,8 @@ scripts/test-launcher.sh     End-to-end test of prepare.mjs against a real Yuvom
 scripts/changelog-release.mjs Names the release block in yuvomi/CHANGELOG.md (--check: it exists)
 renovate.json                Bumps the image tag and the app version together
 .github/workflows/lint.yml   App linter, version check, multi-arch build
-.github/workflows/changelog.yml Names the release on Renovate's bump, checks every pull request
+.github/workflows/changelog.yml Names the release on Renovate's bump, checks every pull request,
+                             starts Lint again for the commit it adds
 ```
 
 ## How the launcher works
