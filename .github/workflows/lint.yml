@@ -57,7 +57,7 @@ jobs:
       # Yuvomi's engines field asks for ^22.14.0 || >=23.6.0.
       - uses: actions/setup-node@v7
         with:
-          node-version: 22.x
+          node-version: 26.x
       - name: Install Yuvomi
         working-directory: upstream
         run: npm ci --omit=dev
