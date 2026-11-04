@@ -49,6 +49,11 @@ renovate.json                Bumps the image tag and the app version together
 - **`DB_ENCRYPTION_KEY`** - only with `encrypt_database` on. The own key from the option, else a
   generated one in `/data/.ha/db_encryption_key` with a copy in `/config/db_encryption_key.txt`.
   The sha256 of the key in use goes to `/data/.ha/db_encryption_key.sha256`.
+- **`DB_ENCRYPTION_AUTO_KEY=false`** - always. Yuvomi 2.85+ otherwise encrypts a new database with
+  a key of its own in `/data/.secrets/`, past the guards. A database the 2.85.0 app let Yuvomi
+  encrypt that way has no key hash yet: the launcher takes the key over once (marker
+  `/data/.ha/db_encryption_key.adopted`) and keeps it running with the option off until the option
+  is switched on.
 - **Guards** (abort before Yuvomi starts) - the database is encrypted but the option is off; the
   key hash differs from the stored one; an own key is shorter than 16 characters or still a
   `REPLACE_WITH_` placeholder.
@@ -59,9 +64,10 @@ renovate.json                Bumps the image tag and the app version together
 - **Weather** - with `use_home_assistant_location`, reads `/core/api/config` through the
   Supervisor unless `WEATHER_LAT` or `OPENWEATHER_API_KEY` is set in `env_vars`. Coordinates are
   rounded to 2 decimals (~1 km). `WEATHER_CITY` is the `weather_city` option, else the instance
-  name, even "Home": left empty, Yuvomi shows the raw coordinates as the city.
+  name, even "Home": left empty, Yuvomi up to 2.84 showed the raw coordinates as the city, 2.85+
+  shows no place line.
 - **`env_vars`** are applied last. Managed names (`DB_PATH`, `PORT`, `SESSION_SECRET`,
-  `DB_ENCRYPTION_KEY`, their `_FILE` variants, `BACKUP_DIR`, `MODULES_DIR`,
+  `DB_ENCRYPTION_KEY`, their `_FILE` variants, `DB_ENCRYPTION_AUTO_KEY`, `BACKUP_DIR`, `MODULES_DIR`,
   `DOCUMENT_STORAGE_LOCAL_PATH`, `NODE_ENV`) are ignored with a log line.
 - `HA_DATA_DIR`, `HA_CONFIG_DIR` and `HA_SUPERVISOR_URL` override the paths for local testing.
 
@@ -99,7 +105,7 @@ renovate.json                Bumps the image tag and the app version together
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs `prepare.mjs` and
   the real Yuvomi server through five scenarios: unencrypted start, enabling encryption with a
   generated key, switching it off (must fail), a wrong own key (must fail), back to the generated
-  key. Needs Node 22.14+, `npm ci --omit=dev` in the checkout (`--ignore-scripts` works) and a
+  key, and with Yuvomi 2.85+ taking over a key Yuvomi generated itself. Needs Node 22.14+, `npm ci --omit=dev` in the checkout (`--ignore-scripts` works) and a
   free port 3000.
 - **Real Supervisor** - the Home Assistant devcontainer
   (`ghcr.io/home-assistant/devcontainer:2-addons`) runs the app end to end. Outside VS Code, run

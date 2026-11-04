@@ -60,6 +60,7 @@ scenario() {
 }
 
 write_options false "";                        scenario "unencrypted start"     start  plain
+write_options false "";                        scenario "unencrypted restart"   start  plain
 write_options true  "";                        scenario "enable, generated key" start  encrypted
 write_options false "";                        scenario "switch encryption off" refuse encrypted
 write_options true  "this-is-a-wrong-key-123"; scenario "wrong own key"         refuse encrypted
@@ -67,5 +68,24 @@ write_options true  "";                        scenario "back to generated key" 
 
 [ -f "$WORK/config/db_encryption_key.txt" ] && echo "PASS  key copy written to config dir" \
   || { echo "FAIL  key copy missing"; failures=$((failures + 1)); }
+
+# A database the 2.85.0 app let Yuvomi encrypt with a key of its own (Yuvomi
+# 2.85+ only): the launcher takes that key over instead of refusing to start.
+if grep -q DB_ENCRYPTION_AUTO_KEY "$YUVOMI/server/utils/auto-secrets.js" 2>/dev/null; then
+  rm -rf "$WORK/data" "$WORK/config"; mkdir -p "$WORK/data" "$WORK/config"
+  ( cd "$YUVOMI" && NODE_ENV=production PORT=3000 DB_PATH="$WORK/data/yuvomi.db" \
+      SESSION_SECRET=test-secret-for-the-launcher-test-0123456789 exec node server/index.js ) \
+    >"$WORK/app.log" 2>&1 &
+  pid=$!
+  i=0
+  while [ $i -lt 30 ] && [ "$(curl -s -o /dev/null -w '%{http_code}' localhost:3000/health)" != 200 ]; do
+    i=$((i + 1)); sleep 1
+  done
+  kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
+  write_options false "";                      scenario "take over Yuvomi key"  start  encrypted
+  write_options false "";                      scenario "restart, option off"   start  encrypted
+  write_options true  "";                      scenario "switch option on"      start  encrypted
+  write_options false "";                      scenario "then switch it off"    refuse encrypted
+fi
 
 exit "$failures"
