@@ -9,7 +9,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import {
   chmodSync, chownSync, existsSync, mkdirSync, openSync, readFileSync, readSync,
-  closeSync, readdirSync, lstatSync, writeFileSync,
+  closeSync, readdirSync, lstatSync, renameSync, unlinkSync, writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
 
@@ -21,17 +21,20 @@ const DB_PATH = path.join(DATA_DIR, 'yuvomi.db');
 const LEGACY_DB_PATH = path.join(DATA_DIR, 'oikos.db');
 const MODULES_DIR = path.join(CONFIG_DIR, 'modules');
 const KEY_EXPORT_FILE = path.join(CONFIG_DIR, 'db_encryption_key.txt');
+// Where Yuvomi 2.85+ keeps a key it generated itself, next to the database.
+const YUVOMI_KEY_FILE = path.join(DATA_DIR, '.secrets', 'DB_ENCRYPTION_KEY');
 const SUPERVISOR_URL = process.env.HA_SUPERVISOR_URL || 'http://supervisor';
 
 // Values the app manages itself. env_vars must not override them, because a
 // wrong DB_PATH or key silently starts an empty instance or locks the data.
 // The *_FILE variants (Yuvomi 2.80+) are blocked too: next to our own value
 // they stop the start, and with encryption off DB_ENCRYPTION_KEY_FILE would
-// encrypt the database past the key guard.
+// encrypt the database past the key guard. DB_ENCRYPTION_AUTO_KEY likewise:
+// with it on, Yuvomi 2.85+ encrypts a new database with a key of its own.
 const MANAGED = new Set([
   'PORT', 'DB_PATH', 'BACKUP_DIR', 'MODULES_DIR', 'SESSION_SECRET',
   'SESSION_SECRET_FILE', 'DB_ENCRYPTION_KEY', 'DB_ENCRYPTION_KEY_FILE',
-  'DOCUMENT_STORAGE_LOCAL_PATH', 'NODE_ENV',
+  'DB_ENCRYPTION_AUTO_KEY', 'DOCUMENT_STORAGE_LOCAL_PATH', 'NODE_ENV',
 ]);
 
 const log = (msg) => process.stderr.write(`[yuvomi-ha] ${msg}\n`);
@@ -123,6 +126,23 @@ function sessionSecret() {
   return secret;
 }
 
+// The 2.85.0 app left DB_ENCRYPTION_AUTO_KEY on, so a new installation got a
+// database encrypted with a key Yuvomi generated, which the guards here did
+// not know. Such a database has no key hash yet: take that key over once.
+function adoptYuvomiKey(generatedFile) {
+  const key = readSecret(YUVOMI_KEY_FILE);
+  if (!key) return '';
+  writeSecret(generatedFile, key);
+  try {
+    // Yuvomi warns on every start while the file sits next to a key from the environment.
+    renameSync(YUVOMI_KEY_FILE, `${YUVOMI_KEY_FILE}.adopted`);
+  } catch (err) {
+    log(`Warning: could not rename ${YUVOMI_KEY_FILE}: ${err.message}`);
+  }
+  log('Took over the database key Yuvomi generated for this installation.');
+  return key;
+}
+
 function encryptionKey(options) {
   const generatedFile = path.join(STATE_DIR, 'db_encryption_key');
   const hashFile = path.join(STATE_DIR, 'db_encryption_key.sha256');
@@ -130,7 +150,18 @@ function encryptionKey(options) {
   const encrypted = isEncryptedDatabase(dbFile);
   const usedHash = readSecret(hashFile);
 
-  if (!options.encrypt_database) {
+  // Marks a key that was Yuvomi's choice, not the person's: with the option
+  // off such a database keeps running until the option is switched on once.
+  const adoptedMarker = path.join(STATE_DIR, 'db_encryption_key.adopted');
+  if (encrypted && !usedHash && !readSecret(generatedFile) && adoptYuvomiKey(generatedFile)) {
+    writeSecret(adoptedMarker, 'taken over from Yuvomi');
+  }
+  const adopted = encrypted && existsSync(adoptedMarker);
+
+  if (!options.encrypt_database && adopted) {
+    log('The database is encrypted with that key, so it stays encrypted. Turn '
+      + '"encrypt_database" on so the option says so; the key stays the same.');
+  } else if (!options.encrypt_database) {
     if (encrypted) {
       fail(
         'The database is encrypted, but "encrypt_database" is off. Turn it back on '
@@ -141,7 +172,9 @@ function encryptionKey(options) {
     return '';
   }
 
-  const ownKey = String(options.encryption_key || '').trim();
+  if (options.encrypt_database && existsSync(adoptedMarker)) unlinkSync(adoptedMarker);
+
+  const ownKey = options.encrypt_database ? String(options.encryption_key || '').trim() : '';
   if (ownKey && ownKey.startsWith('REPLACE_WITH_')) {
     fail('"encryption_key" is still a placeholder. Enter a real key or leave it empty to generate one.');
   }
@@ -188,8 +221,8 @@ function encryptionKey(options) {
 }
 
 // Home Assistant's location_name is the name of the instance, not a place, and
-// many setups keep the default "Home". It is still used as the label: Yuvomi
-// shows the raw coordinates when WEATHER_CITY is empty, which is worse. The
+// many setups keep the default "Home". It is still used as the label: without
+// WEATHER_CITY, Yuvomi up to 2.84 showed the raw coordinates, 2.85+ no place. The
 // weather_city option overrides it, and the log points to that option.
 const DEFAULT_LOCATION_NAMES = new Set(['home']);
 
@@ -245,6 +278,8 @@ async function main() {
     MODULES_ALLOW_WEB_INSTALL: options.modules_allow_web_install ? 'true' : 'false',
     SESSION_SECRET: sessionSecret(),
     DB_ENCRYPTION_KEY: encryptionKey(options),
+    // The app holds the key (or deliberately none); Yuvomi must not make one.
+    DB_ENCRYPTION_AUTO_KEY: 'false',
   };
 
   const baseUrl = String(options.base_url || '').trim().replace(/\/+$/, '');
