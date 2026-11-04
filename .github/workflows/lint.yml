@@ -37,3 +37,29 @@ jobs:
       - name: Build for amd64 and aarch64
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 yuvomi
+
+  launcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Yuvomi version from the Dockerfile
+        id: yuvomi
+        run: |
+          tag=$(sed -nE 's/^ARG BUILD_FROM=ghcr\.io\/ulsklyc\/yuvomi:([0-9.]+)$/\1/p' yuvomi/Dockerfile)
+          [ -n "$tag" ] || { echo "No Yuvomi tag in yuvomi/Dockerfile"; exit 1; }
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        with:
+          repository: ulsklyc/yuvomi
+          ref: v${{ steps.yuvomi.outputs.tag }}
+          path: upstream
+          persist-credentials: false
+      # Yuvomi's engines field asks for ^22.14.0 || >=23.6.0.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+      - name: Install Yuvomi
+        working-directory: upstream
+        run: npm ci --omit=dev
+      - name: Launcher against the real Yuvomi server
+        run: sh scripts/test-launcher.sh "$GITHUB_WORKSPACE/upstream"

@@ -31,8 +31,9 @@ yuvomi/DOCS.md               Documentation tab in Home Assistant
 yuvomi/CHANGELOG.md          Shown in Home Assistant on update
 scripts/test-launcher.sh     End-to-end test of prepare.mjs against a real Yuvomi server
 scripts/changelog-release.mjs Names the release block in yuvomi/CHANGELOG.md (--check: it exists)
-renovate.json                Bumps the image tag and the app version together
-.github/workflows/lint.yml   App linter, version check, multi-arch build
+renovate.json                Bumps the image tag and the app version together, automerges actions
+.github/ISSUE_TEMPLATE/      App problem form; Yuvomi bugs and questions go upstream
+.github/workflows/lint.yml   App linter, version check, multi-arch build, launcher test
 .github/workflows/changelog.yml Names the release on Renovate's bump, checks every pull request,
                              starts Lint again for the commit it adds
 ```
@@ -103,8 +104,8 @@ renovate.json                Bumps the image tag and the app version together
 
 ## Testing
 
-- **CI** runs on every pull request: the app linter, the version check and a build for amd64 and
-  aarch64.
+- **CI** runs on every pull request: the app linter, the version check, a build for amd64 and
+  aarch64, and the launcher test against the Yuvomi tag in the Dockerfile.
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs `prepare.mjs` and
   the real Yuvomi server through five scenarios: unencrypted start, enabling encryption with a
   generated key, switching it off (must fail), a wrong own key (must fail), back to the generated
@@ -131,7 +132,7 @@ Same rules as [Yuvomi](https://github.com/ulsklyc/yuvomi/blob/main/CONTRIBUTING.
   `yuvomi/config.yaml` and the tag in `yuvomi/Dockerfile` together. The Changelog workflow then
   turns **Unreleased** into the version block with the link to the Yuvomi release (and to the
   releases it skips). Before merging, read the Yuvomi release notes for changes to environment
-  variables or secrets, run `scripts/test-launcher.sh` against the new tag, and add a line for
+  variables or secrets, check that the launcher test passed against the new tag, and add a line for
   anything Home Assistant users have to do. A pull request that leaves the app version without a
   changelog block fails the check.
 

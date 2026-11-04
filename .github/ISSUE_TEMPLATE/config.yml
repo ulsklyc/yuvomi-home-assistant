@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Bug in Yuvomi itself
+    url: https://github.com/ulsklyc/yuvomi/issues/new/choose
+    about: Something in Yuvomi (modules, calendar, sync, UI) that also happens outside Home Assistant.
+  - name: Question or idea
+    url: https://github.com/ulsklyc/yuvomi/discussions
+    about: Ask a question or suggest a feature in the Yuvomi discussions.
