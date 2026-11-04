@@ -109,7 +109,8 @@ The app version always equals the Yuvomi version it is built on.
 - **New Yuvomi release** - the version appears in two places, and both must match the image tag:
   `version` in `yuvomi/config.yaml` and `ARG BUILD_FROM` in `yuvomi/Dockerfile`. With the
   Renovate app enabled on this repository, [`renovate.json`](renovate.json) opens one pull request
-  for both. Add an entry to `yuvomi/CHANGELOG.md` with the link to the Yuvomi release.
+  for both, and the [Changelog workflow](.github/workflows/changelog.yml) adds the version block
+  with the link to the Yuvomi release, which Home Assistant shows on the update.
 - **Checks** - every pull request runs the Home Assistant app linter, the version check and a
   build for amd64 and aarch64 ([`lint.yml`](.github/workflows/lint.yml)).
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs the launcher
