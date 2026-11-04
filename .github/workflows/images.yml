@@ -1,0 +1,163 @@
+name: Images
+
+# Builds the app images that config.yaml points to with `image:` and pushes
+# them to GHCR, so the Supervisor pulls them instead of building on the device
+# (and backups no longer carry the whole image).
+#
+# The images for a version must exist before that version reaches main, so
+# this runs on the pull request and is a required check:
+# - A version bump (config.yaml differs from main): builds and pushes the
+#   images whenever they are missing or were built from other launcher files.
+# - Any other pull request: only builds the images if they are missing, and
+#   never replaces the images of a version that is already on main.
+# - On main: builds missing images and fails if the version this push
+#   released has images built from other launcher files.
+# Every run ends by pulling the images anonymously, as a Home Assistant
+# install does: a new GHCR package starts private and has to be made public
+# once in its package settings.
+#
+# Forks get a read-only token, so a version bump has to come from a branch in
+# this repository.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Started by the Changelog workflow for the commit it adds to a Renovate
+  # pull request: a push with GITHUB_TOKEN starts no pull_request run.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: images-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Version, image and launcher files
+        id: app
+        run: |
+          version=$(sed -nE 's/^version: "([^"]+)"$/\1/p' yuvomi/config.yaml)
+          image=$(sed -nE 's/^image: "?([^"]+)"?$/\1/p' yuvomi/config.yaml)
+          [ -n "$version" ] && [ -n "$image" ] || { echo "config.yaml needs version and image"; exit 1; }
+          # Everything that goes into the image: the Dockerfile (with the
+          # Yuvomi tag) and rootfs. The changelog and docs are left out on
+          # purpose, so naming a release does not count as a new build.
+          content="$(git rev-parse HEAD:yuvomi/rootfs)-$(git rev-parse HEAD:yuvomi/Dockerfile)"
+
+          git fetch --quiet --depth=1 origin main
+          main_version=$(git show FETCH_HEAD:yuvomi/config.yaml | sed -nE 's/^version: "([^"]+)"$/\1/p')
+          if [ "${{ github.event_name }}" = push ]; then
+            previous=$(git show HEAD^:yuvomi/config.yaml 2>/dev/null | sed -nE 's/^version: "([^"]+)"$/\1/p')
+            [ "$previous" != "$version" ] && mode=released || mode=main
+          elif [ "$version" != "$main_version" ]; then
+            mode=bump
+          else
+            mode=other
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "content=$content" >> "$GITHUB_OUTPUT"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Version $version ($mode, main has $main_version), launcher files $content"
+
+      - name: Compare with the images in GHCR
+        id: plan
+        env:
+          VERSION: ${{ steps.app.outputs.version }}
+          IMAGE: ${{ steps.app.outputs.image }}
+          CONTENT: ${{ steps.app.outputs.content }}
+          MODE: ${{ steps.app.outputs.mode }}
+          TOKEN: ${{ github.token }}
+        run: |
+          build=""
+          for arch in amd64 aarch64; do
+            ref="$(echo "$IMAGE" | sed "s/{arch}/$arch/"):$VERSION"
+            if out=$(skopeo inspect --creds "${{ github.actor }}:$TOKEN" "docker://$ref" 2>&1); then
+              have=$(echo "$out" | jq -r '.Labels["dev.yuvomi.ha.content"] // ""')
+              if [ "$have" = "$CONTENT" ]; then
+                echo "$ref: up to date"
+              elif [ "$MODE" = bump ]; then
+                echo "$ref: built from other launcher files, rebuilding"
+                build="$build $arch"
+              elif [ "$MODE" = released ]; then
+                echo "::error::$ref was built from other launcher files than this release ($have, now $CONTENT). Was main updated after the images were pushed?"
+                exit 1
+              else
+                echo "$ref: exists (launcher changes ship with the next version)"
+              fi
+            # A package that was never pushed answers "denied" rather than
+            # "manifest unknown"; the push below fails loudly if writing is
+            # not allowed either.
+            elif echo "$out" | grep -qiE 'manifest unknown|name unknown|not found|denied'; then
+              echo "$ref: missing, building"
+              build="$build $arch"
+            else
+              echo "$out"
+              echo "::error::Could not read $ref"
+              exit 1
+            fi
+          done
+          echo "build=${build# }" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v4
+        if: steps.plan.outputs.build != ''
+      - uses: docker/setup-buildx-action@v4
+        if: steps.plan.outputs.build != ''
+      - uses: docker/login-action@v4
+        if: steps.plan.outputs.build != ''
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and push
+        if: steps.plan.outputs.build != ''
+        env:
+          VERSION: ${{ steps.app.outputs.version }}
+          IMAGE: ${{ steps.app.outputs.image }}
+          CONTENT: ${{ steps.app.outputs.content }}
+          ARCHES: ${{ steps.plan.outputs.build }}
+        run: |
+          for arch in $ARCHES; do
+            case "$arch" in amd64) platform=linux/amd64 ;; aarch64) platform=linux/arm64 ;; esac
+            ref="$(echo "$IMAGE" | sed "s/{arch}/$arch/"):$VERSION"
+            # One plain manifest per arch, as the Supervisor expects, so no
+            # provenance or SBOM attestations.
+            docker buildx build yuvomi \
+              --platform "$platform" \
+              --build-arg BUILD_ARCH="$arch" \
+              --build-arg BUILD_VERSION="$VERSION" \
+              --label "dev.yuvomi.ha.content=$CONTENT" \
+              --label "org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
+              --label "org.opencontainers.image.version=$VERSION" \
+              --provenance=false --sbom=false \
+              --tag "$ref" \
+              --push
+            echo "Pushed $ref"
+          done
+
+      - name: The images can be pulled without signing in
+        env:
+          VERSION: ${{ steps.app.outputs.version }}
+          IMAGE: ${{ steps.app.outputs.image }}
+        run: |
+          for arch in amd64 aarch64; do
+            ref="$(echo "$IMAGE" | sed "s/{arch}/$arch/"):$VERSION"
+            if skopeo inspect --no-creds "docker://$ref" > /dev/null; then
+              echo "$ref: public"
+            else
+              echo "::error::$ref cannot be pulled without signing in. Make the package public once: github.com/${{ github.repository_owner }} > Packages > $(basename "${ref%%:*}") > Package settings > Change visibility."
+              exit 1
+            fi
+          done
