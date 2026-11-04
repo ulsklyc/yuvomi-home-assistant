@@ -35,7 +35,8 @@ renovate.json                Bumps the image tag and the app version together, a
 .github/ISSUE_TEMPLATE/      App problem form; Yuvomi bugs and questions go upstream
 .github/workflows/lint.yml   App linter, version check, multi-arch build, launcher test
 .github/workflows/changelog.yml Names the release on Renovate's bump, checks every pull request,
-                             starts Lint again for the commit it adds
+                             starts Lint and Images again for the commit it adds
+.github/workflows/images.yml Builds and pushes ghcr.io/ulsklyc/yuvomi-ha-{amd64,aarch64}:<version>
 ```
 
 ## How the launcher works
@@ -94,6 +95,15 @@ renovate.json                Bumps the image tag and the app version together, a
   exits with 143, which current Supervisors report as an error, e.g. during every cold backup.
   SQLite replays the WAL on the next start.
 - **Build config in the Dockerfile**, not the deprecated `build.yaml`.
+- **Prebuilt images** (`image:` in `config.yaml`), so devices pull instead of build and backups
+  stay small (a locally built app carries its ~590 MB image in every backup). The Images workflow
+  pushes `ghcr.io/ulsklyc/yuvomi-ha-{amd64,aarch64}:<version>` with the repository's
+  `GITHUB_TOKEN` only, and it is a required check, so the images exist before a version reaches
+  `main`. Each image carries the label `dev.yuvomi.ha.content` (git hashes of `rootfs/` and the
+  Dockerfile). A version bump rebuilds when they differ; images of a version already on `main` are
+  never replaced, so launcher changes ship with the next version, like the changelog says.
+  Every run also pulls the images without signing in, as a Home Assistant install does, so a
+  package that is not public fails the check.
 - **`app_config`** instead of the legacy `addon_config` map; the Samba share is still called
   `addon_configs`, so the docs keep that path.
 - **Watchdog through a Docker `HEALTHCHECK`** (node `fetch` on `/health`; the image has no curl).
@@ -115,8 +125,10 @@ renovate.json                Bumps the image tag and the app version together, a
   (`ghcr.io/home-assistant/devcontainer:2-addons`) runs the app end to end. Outside VS Code, run
   it `--privileged` with volumes on `/var/lib/docker` and `/mnt/supervisor`, bind `yuvomi/` to
   `/mnt/supervisor/addons/local/yuvomi`, then `supervisor_bootstrap`, `supervisor_run`,
-  `mkdir -p /run/supervisor` and `ha jobs options --ignore-conditions healthy`. The Home
-  Assistant location lookup cannot be tested there (the proxy answers 502).
+  `mkdir -p /run/supervisor` and `ha jobs options --ignore-conditions healthy`. Remove the
+  `image:` line from `config.yaml` in the bound copy, or the Supervisor pulls the published image
+  instead of building your changes. The Home Assistant location lookup cannot be tested there
+  (the proxy answers 502).
 
 ## Commits and pull requests
 
@@ -134,7 +146,9 @@ Same rules as [Yuvomi](https://github.com/ulsklyc/yuvomi/blob/main/CONTRIBUTING.
   releases it skips). Before merging, read the Yuvomi release notes for changes to environment
   variables or secrets, check that the launcher test passed against the new tag, and add a line for
   anything Home Assistant users have to do. A pull request that leaves the app version without a
-  changelog block fails the check.
+  changelog block fails the check. The Images workflow pushes the images for the new version on
+  that pull request; a bump from a fork cannot (its token is read-only), so bumps come from a
+  branch in this repository.
 
 ## AI Assistance
 
