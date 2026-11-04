@@ -4,14 +4,6 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Yuvomi base image in the Dockerfile",
-      "managerFilePatterns": ["/^yuvomi/Dockerfile$/"],
-      "matchStrings": ["ghcr\\.io/ulsklyc/yuvomi:(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
-      "depNameTemplate": "ghcr.io/ulsklyc/yuvomi",
-      "datasourceTemplate": "docker"
-    },
-    {
-      "customType": "regex",
       "description": "App version in config.yaml follows the image",
       "managerFilePatterns": ["/^yuvomi/config\\.yaml$/"],
       "matchStrings": ["version: \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
