@@ -111,8 +111,8 @@ The app version always equals the Yuvomi version it is built on.
   Renovate app enabled on this repository, [`renovate.json`](renovate.json) opens one pull request
   for both, and the [Changelog workflow](.github/workflows/changelog.yml) adds the version block
   with the link to the Yuvomi release, which Home Assistant shows on the update.
-- **Checks** - every pull request runs the Home Assistant app linter, the version check and a
-  build for amd64 and aarch64 ([`lint.yml`](.github/workflows/lint.yml)).
+- **Checks** - every pull request runs the Home Assistant app linter, the version check, a
+  build for amd64 and aarch64 and the launcher test ([`lint.yml`](.github/workflows/lint.yml)).
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs the launcher
   against a real Yuvomi server through the encryption scenarios (start, enable, refuse to switch
   off, refuse a wrong key). Needs Node 22.14+ and `npm ci --omit=dev` in the checkout.

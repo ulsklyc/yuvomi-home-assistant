@@ -1,0 +1,46 @@
+name: App problem
+description: Installing, starting, options, updates or backups of the Home Assistant app.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        For problems with the Home Assistant app only. A bug in Yuvomi itself
+        belongs in the [Yuvomi issues](https://github.com/ulsklyc/yuvomi/issues/new/choose).
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      placeholder: "2.85.0"
+    validations:
+      required: true
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version and installation type
+      description: Settings > About. The app needs Home Assistant OS or Supervised.
+      placeholder: "Core 2026.11.0, Home Assistant OS 17.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Architecture
+      options:
+        - amd64
+        - aarch64
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: App log
+      description: Settings > Apps > Yuvomi > Log. Remove keys and personal data.
+      render: shell

@@ -15,6 +15,13 @@
     {
       "matchDepNames": ["ghcr.io/ulsklyc/yuvomi"],
       "groupName": "Yuvomi"
+    },
+    {
+      "description": "Action updates merge once all checks pass; Renovate checks them itself, GitHub auto-merge would not wait without required checks. The Yuvomi bump stays manual.",
+      "matchManagers": ["github-actions"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": false
     }
   ]
 }
