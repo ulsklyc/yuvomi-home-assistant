@@ -30,8 +30,10 @@ yuvomi/translations/*.yaml   Option labels (en, de)
 yuvomi/DOCS.md               Documentation tab in Home Assistant
 yuvomi/CHANGELOG.md          Shown in Home Assistant on update
 scripts/test-launcher.sh     End-to-end test of prepare.mjs against a real Yuvomi server
+scripts/changelog-release.mjs Names the release block in yuvomi/CHANGELOG.md (--check: it exists)
 renovate.json                Bumps the image tag and the app version together
 .github/workflows/lint.yml   App linter, version check, multi-arch build
+.github/workflows/changelog.yml Names the release on Renovate's bump, checks every pull request
 ```
 
 ## How the launcher works
@@ -124,8 +126,13 @@ Same rules as [Yuvomi](https://github.com/ulsklyc/yuvomi/blob/main/CONTRIBUTING.
 - One logical change per pull request; pull requests are squash-merged.
 - A user-visible change gets an entry in `yuvomi/CHANGELOG.md` under **Unreleased**; the next
   version bump turns that into the version heading.
-- **New Yuvomi release** - bump `version` in `yuvomi/config.yaml` and the tag in
-  `yuvomi/Dockerfile` together, and link the Yuvomi release in the changelog.
+- **New Yuvomi release** - Renovate opens one pull request that bumps `version` in
+  `yuvomi/config.yaml` and the tag in `yuvomi/Dockerfile` together. The Changelog workflow then
+  turns **Unreleased** into the version block with the link to the Yuvomi release (and to the
+  releases it skips). Before merging, read the Yuvomi release notes for changes to environment
+  variables or secrets, run `scripts/test-launcher.sh` against the new tag, and add a line for
+  anything Home Assistant users have to do. A pull request that leaves the app version without a
+  changelog block fails the check.
 
 ## AI Assistance
 

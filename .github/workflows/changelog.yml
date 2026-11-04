@@ -1,0 +1,38 @@
+name: Changelog
+
+# Home Assistant shows the "## <version>" block of yuvomi/CHANGELOG.md on the
+# update. Renovate bumps the version but cannot write that block, so this
+# workflow names the release on Renovate's pull requests and fails any other
+# pull request that leaves the current version without one.
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The branch itself, so a commit can go back onto Renovate's pull request.
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Name the release on a Renovate bump
+        if: startsWith(github.event.pull_request.head.ref, 'renovate/') && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/changelog-release.mjs
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -am "docs(changelog): name the $(sed -nE 's/^version: "([^"]+)"/\1/p' yuvomi/config.yaml) release"
+            git push
+          fi
+
+      - name: The app version has a changelog block
+        run: node scripts/changelog-release.mjs --check
