@@ -13,7 +13,7 @@
   <p>
     <a href="yuvomi/CHANGELOG.md"><img src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fulsklyc%2Fyuvomi-home-assistant%2Fmain%2Fyuvomi%2Fconfig.yaml&query=%24.version&label=app&style=flat-square&color=6C3AED" alt="App version"></a>
     <a href="#install"><img src="https://img.shields.io/badge/platforms-amd64%20%7C%20aarch64-6C3AED?style=flat-square" alt="Runs on amd64 and aarch64"></a>
-    <a href="https://github.com/ulsklyc/yuvomi-home-assistant/actions/workflows/lint.yml"><img src="https://img.shields.io/github/actions/workflow/status/ulsklyc/yuvomi-home-assistant/lint.yml?branch=main&style=flat-square&label=lint" alt="Lint status"></a>
+    <a href="https://github.com/ulsklyc/yuvomi-home-assistant/actions/workflows/lint.yml"><img src="https://img.shields.io/github/actions/workflow/status/ulsklyc/yuvomi-home-assistant/lint.yml?branch=main&style=flat-square&color=6C3AED&label=lint" alt="Lint status"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6C3AED?style=flat-square" alt="MIT license"></a>
   </p>
 

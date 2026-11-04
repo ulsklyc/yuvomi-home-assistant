@@ -15,5 +15,16 @@ Thumbs.db
 .github/skills/
 .github/hooks/
 .playwright-mcp/
+.cursor/
+.github/prompts/
+.github/instructions/
+.github/copilot-instructions.md
+.mcp.json
+.worktreeinclude
+.worktrees/
+.impeccable/
+.superpowers/
 AGENTS.md
 CLAUDE.md
+PRODUCT.md
+GLOSSARY.md
