@@ -113,6 +113,9 @@ The app version always equals the Yuvomi version it is built on.
   with the link to the Yuvomi release, which Home Assistant shows on the update.
 - **Checks** - every pull request runs the Home Assistant app linter, the version check, a
   build for amd64 and aarch64 and the launcher test ([`lint.yml`](.github/workflows/lint.yml)).
+- **Images** - devices pull prebuilt images, `ghcr.io/ulsklyc/yuvomi-ha-{amd64,aarch64}`. The
+  [Images workflow](.github/workflows/images.yml) pushes them on the pull request that bumps the
+  version, before it reaches `main`.
 - **Launcher test** - `scripts/test-launcher.sh <path-to-yuvomi-checkout>` runs the launcher
   against a real Yuvomi server through the encryption scenarios (start, enable, refuse to switch
   off, refuse a wrong key). Needs Node 22.14+ and `npm ci --omit=dev` in the checkout.

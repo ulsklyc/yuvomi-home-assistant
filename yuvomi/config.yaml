@@ -3,6 +3,8 @@ version: "2.85.0"
 slug: yuvomi
 description: Self-hosted family planner - tasks, calendar, shopping, meals, budget
 url: https://github.com/ulsklyc/yuvomi-home-assistant/tree/main/yuvomi
+# Prebuilt by .github/workflows/images.yml; the Supervisor pulls <image>:<version>.
+image: "ghcr.io/ulsklyc/yuvomi-ha-{arch}"
 arch:
   - amd64
   - aarch64

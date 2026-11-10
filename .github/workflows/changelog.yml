@@ -50,6 +50,7 @@ jobs:
         run: |
           gh workflow run lint.yml --ref "$BRANCH"
           gh workflow run changelog.yml --ref "$BRANCH"
+          gh workflow run images.yml --ref "$BRANCH"
 
       - name: The app version has a changelog block
         run: node scripts/changelog-release.mjs --check
