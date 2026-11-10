@@ -1,7 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.88.0
 
+- Based on [Yuvomi 2.88.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.88.0)
+  (changes since 2.85.0: [2.86.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.86.0),
+  [2.87.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.87.0)).
 - The app is now installed as a prebuilt image instead of being built on your
   device. Updates are quicker, and backups of the app no longer contain the
   whole image (about 590 MB), only your data.
