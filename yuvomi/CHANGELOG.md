@@ -1,7 +1,18 @@
 # Changelog
 
-## Unreleased
+## 2.89.1
 
+- Based on [Yuvomi 2.89.1](https://github.com/ulsklyc/yuvomi/releases/tag/v2.89.1)
+  (changes since 2.85.0: [2.86.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.86.0),
+  [2.87.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.87.0),
+  [2.88.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.88.0),
+  [2.88.1](https://github.com/ulsklyc/yuvomi/releases/tag/v2.88.1),
+  [2.89.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.89.0)).
+- **If you use third-party modules:** since Yuvomi 2.88.0 a module can only
+  import `/api.js`, `/i18n.js` and `/utils/html.js`. A module that imports
+  other app files no longer loads; update it before or right after this update.
+- Yuvomi now needs Chrome or Edge 105, Firefox 115, or Safari and iOS 15.4.
+  Older browsers see a notice page instead of the app.
 - The app is now installed as a prebuilt image instead of being built on your
   device. Updates are quicker, and backups of the app no longer contain the
   whole image (about 590 MB), only your data.

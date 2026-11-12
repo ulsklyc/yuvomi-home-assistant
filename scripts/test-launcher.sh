@@ -1,9 +1,10 @@
 #!/bin/sh
 # End-to-end test of yuvomi/rootfs/ha/prepare.mjs against a real Yuvomi server.
 #
-# Usage: scripts/test-launcher.sh /path/to/yuvomi-checkout
-# Prerequisites: Node 22.14+, `npm ci --omit=dev` (or --ignore-scripts) in the
-# checkout, port 3000 free, curl.
+# Usage: scripts/test-launcher.sh /path/to/yuvomi
+# Prerequisites: Node 22.14+, a Yuvomi tree with the built app in dist/ (the
+# unpacked release asset yuvomi-<version>-dist.tar.gz, or a checkout after
+# `npm run build`), `npm ci --omit=dev` in it, port 3000 free, curl.
 set -u
 
 YUVOMI="${1:?path to a Yuvomi checkout}"
