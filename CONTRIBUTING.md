@@ -143,7 +143,9 @@ Same rules as [Yuvomi](https://github.com/ulsklyc/yuvomi/blob/main/CONTRIBUTING.
 - **New Yuvomi release** - Renovate opens one pull request that bumps `version` in
   `yuvomi/config.yaml` and the tag in `yuvomi/Dockerfile` together. The Changelog workflow then
   turns **Unreleased** into the version block with the link to the Yuvomi release (and to the
-  releases it skips). Before merging, read the Yuvomi release notes for changes to environment
+  releases it skips). That commit does not stop Renovate: `renovate.json` lists the workflow's
+  author under `gitIgnoredAuthors`, so a newer Yuvomi release or a conflict still updates the pull
+  request, and the workflow names the release again. Before merging, read the Yuvomi release notes for changes to environment
   variables or secrets, check that the launcher test passed against the new tag, and add a line for
   anything Home Assistant users have to do. A pull request that leaves the app version without a
   changelog block fails the check. The Images workflow pushes the images for the new version on
