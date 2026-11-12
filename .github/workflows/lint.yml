@@ -51,12 +51,20 @@ jobs:
           tag=$(sed -nE 's/^ARG BUILD_FROM=ghcr\.io\/ulsklyc\/yuvomi:([0-9.]+)$/\1/p' yuvomi/Dockerfile)
           [ -n "$tag" ] || { echo "No Yuvomi tag in yuvomi/Dockerfile"; exit 1; }
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v7
-        with:
-          repository: ulsklyc/yuvomi
-          ref: v${{ steps.yuvomi.outputs.tag }}
-          path: upstream
-          persist-credentials: false
+      # The release asset, not a checkout of the tag: since Yuvomi 2.88.0 the
+      # server only starts from a built app (dist/), and the asset carries the
+      # build the image ships. It is unpacked only after its build provenance
+      # was verified.
+      - name: Yuvomi release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.yuvomi.outputs.tag }}
+        run: |
+          asset="yuvomi-${TAG#v}-dist.tar.gz"
+          gh release download "$TAG" --repo ulsklyc/yuvomi --pattern "$asset" --dir "$RUNNER_TEMP"
+          gh attestation verify "$RUNNER_TEMP/$asset" --repo ulsklyc/yuvomi
+          mkdir upstream
+          tar -xzf "$RUNNER_TEMP/$asset" -C upstream --strip-components=1
       # Yuvomi's engines field asks for ^22.14.0 || >=23.6.0.
       - uses: actions/setup-node@v7
         with:
