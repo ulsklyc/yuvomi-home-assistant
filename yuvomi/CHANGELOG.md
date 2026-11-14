@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.90.0
+
+- Based on [Yuvomi 2.90.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.90.0).
+
 ## 2.89.1
 
 - Based on [Yuvomi 2.89.1](https://github.com/ulsklyc/yuvomi/releases/tag/v2.89.1)
