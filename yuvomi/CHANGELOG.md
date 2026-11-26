@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.96.0
+
+- Based on [Yuvomi 2.96.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.96.0)
+  (changes since 2.90.0: [2.91.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.91.0),
+  [2.91.1](https://github.com/ulsklyc/yuvomi/releases/tag/v2.91.1),
+  [2.92.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.92.0),
+  [2.93.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.93.0),
+  [2.94.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.94.0),
+  [2.95.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.95.0)).
+
 ## 2.90.0
 
 - Based on [Yuvomi 2.90.0](https://github.com/ulsklyc/yuvomi/releases/tag/v2.90.0).
